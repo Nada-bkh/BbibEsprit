@@ -1,0 +1,7 @@
+<form method="post" action="{{ path('edit', {'id': author.id}) }}">
+    <input type="text" name="username" value="{{ author.username }}">
+    <input type="text" name="email" value="{{ author.email }}">
+    <!-- Ajoutez d'autres champs selon vos besoins -->
+
+    <input type="submit" value="Update">
+</form>

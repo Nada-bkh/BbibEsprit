@@ -1,0 +1,11 @@
+<form method="post" action="{{ path('bookEdit', {'ref': book.ref}) }}">
+    <input type="text" name="username" value="{{ book.ref }}">
+    <input type="text" name="email" value="{{ book.title }}">
+    <input type="text" name="email" value="{{ book.publicationDate | date('Y-m-d H:i:s')}}">
+    <input type="text" name="email" value="{{ book.published }}">
+    <input type="text" name="email" value="{{ book.category }}">
+    <input type="text" name="email" value="{{ book.author }}">
+    <!-- Ajoutez d'autres champs selon vos besoins -->
+
+    <input type="submit" value="Update">
+</form>

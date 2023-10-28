@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Book Details</h1>
+<dl>
+    <dt>Title:</dt>
+    <dd>{{ book.title }}</dd>
+
+    <dt>Category:</dt>
+    <dd>{{ book.category }}</dd>
+
+    <dt>Publication Date:</dt>
+    <dd>{{ book.publicationDate|date('Y-m-d H:i:s') }}</dd>
+
+    <dt>Published:</dt>
+    <dd>{{ book.published ? 'Yes' : 'No' }}</dd>
+
+    <dt>Author:</dt>
+    <dd>{{ book.author }}</dd>
+</dl>
+{% endblock body %}

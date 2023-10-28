@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add author</title>
+</head>
+<body>
+<h1>Add Book</h1>
+
+<form method="post" action="{{ path('bookCreate') }}">
+    {{ form_start(form) }}
+
+    {{ form_row(form.ref, {'label': 'Ref'}) }}
+    {{ form_row(form.title, {'label': 'Title'}) }}
+    {{ form_row(form.publicationDate, {'label': 'Publication date'}) }}
+    {{ form_row(form.category, {'label': 'Category'}) }}
+    {{ form_row(form.author, {'label': 'Author'}) }}
+
+    <button type="submit" class="btn btn-primary">Save</button>
+
+    {{ form_end(form) }}
+</form>
+
+<a href="{{ path('bookFetch') }}">Return to books list</a>
+</body>
+</html>
