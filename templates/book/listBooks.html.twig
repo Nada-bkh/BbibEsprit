@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List of Books Published Before {{ year }}{% endblock %}
+
+{% block body %}
+<h1>List of Books Published Before {{ year }}</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publication Date</th>
+        <th>Category</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for book in books %}
+        <tr>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author.username }}</td>
+            <td>{{ book.publicationDate|date('Y-m-d H:i:s') }}</td>
+            <td>{{ book.category }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock body %}

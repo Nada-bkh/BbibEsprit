@@ -45,4 +45,38 @@ class AuthorRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function listAuthorByEmail()
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.email', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findAuthorsByBookCountRange($minBookCount, $maxBookCount)
+    {
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->where('a.nb_books >= :minBookCount')
+            ->andWhere('a.nb_books <= :maxBookCount')
+            ->setParameter('minBookCount', $minBookCount)
+            ->setParameter('maxBookCount', $maxBookCount);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+    public function deleteAuthorsWithNoBooks()
+    {
+        $entityManager = $this->getEntityManager();
+
+        // Find authors with nb_books = 0
+        $authorsToDelete = $this->createQueryBuilder('a')
+            ->where('a.nb_books = 0')
+            ->getQuery()
+            ->getResult();
+
+        // Delete authors with nb_books = 0
+        foreach ($authorsToDelete as $author) {
+            $entityManager->remove($author);
+        }
+
+        $entityManager->flush();
+    }
 }

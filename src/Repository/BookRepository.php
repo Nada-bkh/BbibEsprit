@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -55,4 +57,58 @@ class BookRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function searchBookByRef($ref)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.ref = :ref')
+            ->setParameter('ref', $ref)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    public function booksListByAuthors()
+    {
+        return $this->createQueryBuilder('b')
+            ->join('b.author', 'a')
+            ->orderBy('a.username', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function BooksPublishedBeforeYear(int $year)
+    {
+        return $this->createQueryBuilder('b')
+            ->select('b')
+            ->leftJoin('b.author', 'a')
+            ->where('b.publicationDate < :year')
+            ->andWhere('a.nb_books > 10')
+            ->setParameter('year', $year . '-01-01') // Convert to the first day of the year
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function RomanceBooks()
+    {
+        return $this->createQueryBuilder('b')
+            ->select('COUNT(b.ref)')
+            ->where('b.category = :category')
+            ->setParameter('category', 'Romance')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    public function findBooksPublishedBetweenDates(\DateTime $startDate, \DateTime $endDate)
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.publicationDate BETWEEN :startDate AND :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+    }
 }

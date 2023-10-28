@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Author;
 use App\Entity\Student;
+use App\Form\AuthorSearchType;
 use App\Form\AuthorType;
-use App\Repository\AuthorRepository;
-use App\Repository\StudentRepository;
+use App\Repository\AuthorRepository;;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AuthorController extends AbstractController
 {
+    private $authorSearchRepository;
+
+    public function __construct(AuthorRepository $authorSearchRepository)
+    {
+        $this->authorSearchRepository = $authorSearchRepository;
+    }
+
     #[Route('/author', name: 'app_author')]
     public function index(): Response
     {
@@ -23,6 +30,7 @@ class AuthorController extends AbstractController
             'controller_name' => 'AuthorController',
         ]);
     }
+
     #[Route ('/create', name: 'create')]
     public function create(ManagerRegistry $managerRegistry, Request $request): Response
     {
@@ -49,21 +57,26 @@ class AuthorController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/fetch',name:'fetch')]
-    public function get (AuthorRepository $authorRepository){
+
+    #[Route('/fetch', name: 'fetch')]
+    public function get(AuthorRepository $authorRepository)
+    {
         $authors = $authorRepository->findAll();
-        return $this->render('author/fetch.html.twig',[
-            'authors'=>$authors
+        return $this->render('author/fetch.html.twig', [
+            'authors' => $authors
         ]);
     }
-    #[Route('/delete/{id}',name:'delete')]
-    public function delete($id,ManagerRegistry $manager,AuthorRepository $authorRepository){
+
+    #[Route('/delete/{id}', name: 'delete')]
+    public function delete($id, ManagerRegistry $manager, AuthorRepository $authorRepository)
+    {
         $author = $authorRepository->find($id);
         $manager->getManager()->remove($author);
         $manager->getManager()->flush();
         return $this->redirectToRoute('fetch');
     }
-    #[Route('/edit/{id}',name:'edit')]
+
+    #[Route('/edit/{id}', name: 'edit')]
     public function edit(Request $request, $id, EntityManagerInterface $entityManager): Response
     {
         $author = $entityManager->getRepository(Author::class)->find($id);
@@ -95,4 +108,47 @@ class AuthorController extends AbstractController
         ]);
     }
 
+    #[Route('/authors', name: 'authorListByEmail')]
+    public function listAuthorsByEmail(AuthorRepository $authorRepository): Response
+    {
+        $authors = $authorRepository->listAuthorByEmail();
+
+        return $this->render('author/fetch.html.twig', [
+            'authors' => $authors,
+        ]);
+    }
+
+    #[Route('/search', name: 'search')]
+    public function search(Request $request): Response
+    {
+        $form = $this->createForm(AuthorSearchType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $minBookCount = $data['minBookCount'];
+            $maxBookCount = $data['maxBookCount'];
+
+            // Query your repository to find authors within the specified book count range
+            $authors = $this->authorSearchRepository->findAuthorsByBookCountRange($minBookCount, $maxBookCount);
+
+            // Render the view with the filtered authors
+            return $this->render('author/search_results.html.twig', [
+                'authors' => $authors,
+            ]);
+        }
+
+        return $this->render('author/search_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/noBooks', name: 'deleteWithNoBooks')]
+    public function deleteAuthorsWithNoBooks(AuthorRepository $authorRepository): Response
+    {
+        // Call the custom repository method to delete authors with nb_books = 0
+        $authorRepository->deleteAuthorsWithNoBooks();
+
+        // You can return a response or redirect to another page
+        return $this->redirectToRoute('fetch'); // Replace 'some_route' with the route you want to redirect to
+    }
 }

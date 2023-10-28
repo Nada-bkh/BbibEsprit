@@ -123,4 +123,61 @@ class BookController extends AbstractController
             'book' => $book,
         ]);
     }
+    #[Route('/book/search', name: 'bookSearch')]
+    public function search(Request $request, BookRepository $bookRepository)
+    {
+        $ref = $request->query->get('ref'); // Get the "ref" parameter from the query string
+
+        if ($ref) {
+            $book = $bookRepository->searchBookByRef($ref);
+        } else {
+            $book = null;
+        }
+
+        return $this->render('book/search.html.twig', [
+            'book' => $book,
+        ]);
+    }
+    #[Route('/booksByAuthor', name: 'booksListByAuthors')]
+    public function booksListByAuthors(BookRepository $bookRepository): Response
+    {
+        // Use the custom repository method to get books sorted by authors
+        $books = $bookRepository->booksListByAuthors();
+
+        return $this->render('book/booksByAuthor.html.twig', [
+            'books' => $books,
+        ]);
+    }
+    #[Route('/books/published', name: 'list_books_published_before_year')]
+    public function listBooksPublishedBeforeYear(BookRepository $bookRepository): Response
+    {
+        $year = 2023; // Change this to your desired year
+        $books = $bookRepository->BooksPublishedBeforeYear($year);
+
+        return $this->render('book/listBooks.html.twig', [
+            'books' => $books,
+            'year' => $year,
+        ]);
+    }
+    #[Route('/books/romance', name: 'romanceBooks')]
+    public function countRomanceBooks(BookRepository $bookRepository): Response
+    {
+        $count = $bookRepository->RomanceBooks();
+
+        return $this->render('book/romanceBooks.html.twig', [
+            'count' => $count,
+        ]);
+    }
+    #[Route('/books/publishedDates', name: 'publishedDates')]
+    public function booksPublishedBetweenDates(BookRepository $bookRepository): Response
+    {
+        $startDate = new \DateTime('2014-01-01');
+        $endDate = new \DateTime('2018-12-31');
+        $books = $bookRepository->findBooksPublishedBetweenDates($startDate, $endDate);
+
+        return $this->render('book/publishedDates.html.twig', [
+            'books' => $books,
+        ]);
+    }
+
 }

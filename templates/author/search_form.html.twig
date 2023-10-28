@@ -1,0 +1,22 @@
+{# templates/author/search_form.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Authors by Book Count{% endblock %}
+
+{% block body %}
+    <h1>Search Authors by Book Count</h1>
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_label(form.minBookCount) }}
+        {{ form_widget(form.minBookCount) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(form.maxBookCount) }}
+        {{ form_widget(form.maxBookCount) }}
+    </div>
+    <div class="form-group">
+        {{ form_widget(form.search, { 'label': 'Search' }) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

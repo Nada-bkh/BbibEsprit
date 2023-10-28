@@ -4,6 +4,13 @@
     }
 </style>
 <h1>List Of Books</h1>
+<h1>Search for a Book by Reference</h1>
+
+<form method="GET" action="{{ path('bookSearch') }}">
+    <label for="ref">Book Reference:</label>
+    <input type="text" id="ref" name="ref">
+    <button type="submit">Search</button>
+</form>
 <table>
     <tr>
         <th>Id</th>

@@ -1,0 +1,23 @@
+{# templates/book/search.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Books{% endblock %}
+
+{% block body %}
+
+{% if book is defined %}
+    <h2>Search Results:</h2>
+    {% if book is not empty %}
+        <p>Book Reference: {{ book.ref }}</p>
+        <p>Title: {{ book.title }}</p>
+        <p>Category: {{ book.category }}</p>
+        <p>Publication Date: {{ book.publicationDate|date('Y-m-d H:i:s') }}</p>
+        <p>Published: {{ book.published ? 'Yes' : 'No' }}</p>
+        <p>Author: {{ book.author.getUsername() }}</p>
+    {% else %}
+        <p>No book found with the specified reference.</p>
+    {% endif %}
+{% endif %}
+{% endblock body %}
+
